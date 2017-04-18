@@ -5,10 +5,12 @@ import train
 import math
 from decimal import Decimal
 
-res = [[0, 0],[0, 0]] #results, 
+res = [[0, 0],[0, 0]] # Results array. First list holds the classification 
+						#results of class 0,"negative". Second one holds results of class 1,"positive".
 
 def words(text): return re.findall(r'\w+', text)
 
+# Reads the files in a directory and builds up the classification results array.
 def reader(directory, dic):
 	os.chdir(directory)
 	for f in glob.glob("*.txt"):
@@ -16,7 +18,9 @@ def reader(directory, dic):
 		c = classify(corpus)
 		res[dic][c] += 1
 
-# 1 is class positive, 0 is class negative
+# Finds the prior probabilities in logspace and takes the difference for each class.
+# Sums up all the differences into variable p.
+# If p is greater than 0, then it classifies the document as class0,"negative". Otherwise, class1.
 def classify(corpus):
 	p1 = math.log(Decimal(train.nOfDocs[0])) - math.log(train.nOfDocs[0]+train.nOfDocs[1])
 	p2 = math.log(Decimal(train.nOfDocs[1])) - math.log(train.nOfDocs[0]+train.nOfDocs[1])
@@ -28,6 +32,7 @@ def classify(corpus):
 			p = p + c0 - c1
 	return (0 if p>0 else 1)
 
+# Starts the testing phase.
 def doTest():
 	global res
 	res = [[0,0], [0,0]]
